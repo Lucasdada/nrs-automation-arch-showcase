@@ -44,6 +44,7 @@ guards for handlers, and a root type-check that covers every workspace.
 | 4 — client request adapter | Every request now uses one adapter. The client has **one** raw `fetch` left — inside that adapter. Four error classes collapsed to one. Net **−310 lines**, plus 9 tests for the adapter. |
 | 5 — cache tree + invalidation | ~50 scattered invalidation calls replaced by one module. Two reactive cache-subscription hooks removed. Three latent bugs fixed, including a key mismatch that left a settings banner stale. 12 tests, including seeded randomized scenarios. |
 | 6 — journey page fracture | A 3,257-line page split into a layout module, five stage modules, and shared UI. The route and behaviour are unchanged. Three near-identical job-status loops became one `runJob(spec)`. 6 fake-timer tests for the loop. |
+| Complexity pass | Every function in all four workspaces is now cyclomatic complexity **≤ 10** (client had 32 over, server 43). Same method each time: sub-components, pure helpers, lookup tables, guard clauses. No behaviour change. |
 
 Each candidate kept or increased the test count and passed the server and client
 type checks before its commit.

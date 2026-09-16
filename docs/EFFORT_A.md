@@ -127,6 +127,33 @@ thrown-status, replaced-job, and duplicate-start cases. The per-stage handle
 hooks (one read/poll/mutate hook per stage) remain as a follow-up, held back
 until there are component tests to protect them.
 
+## Cross-cutting — complexity and comments
+
+After candidate 6, every function in the codebase was brought to a cyclomatic
+complexity of **10 or less** (the client started with 32 functions over 10; the
+server with 43; four more in the MCP server and platform code). The worst
+offenders before the pass:
+
+| Function | Before | After |
+|----------|--------|-------|
+| Run configuration modal | 62 | 4 |
+| Run summary panel | 40 | 1 |
+| Requirements section | 33 | ≤10 |
+| Assistant panel | 32 | 5 |
+| Generated-tests section | 30 | ≤10 |
+| Run start (server) | 29 | 6 |
+| Settings patch builder | 24 | 4 |
+| Test discovery (server) | 26 | 3 |
+
+The method was always the same: extract small sub-components, move pure
+booleans and ternaries into helpers or lookup tables, and replace long
+`if/else` chains with guard clauses. No request shape, database write, error
+code, document output, or user-visible text changed. Comments were trimmed to
+short, necessary notes.
+
+Every step was verified with type checks, the test suites (client 27, server 22),
+a production build, and a lint rule for complexity.
+
 ## Planned
 
 ### 7 — Repository read models and one run-events module (server)
