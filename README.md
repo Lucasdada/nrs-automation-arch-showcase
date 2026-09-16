@@ -28,7 +28,7 @@ See [`docs/METHOD.md`](docs/METHOD.md) for that loop and
 | 3 | One LLM call envelope; make the provider seam load-bearing | Server | Done |
 | 4 | One client request adapter | Client | Done |
 | 5 | Typed cache tree + operation-owned invalidation | Client | Done |
-| 6 | Fracture the journey page into stage modules; collapse the poll loops | Client | In progress |
+| 6 | Fracture the journey page into stage modules; collapse the poll loops | Client | Done |
 | 7 | Repository read models + one run-events module | Server | Planned |
 | 8 | Stop `project.json` write-backs erasing runtime fields | Server | Done |
 | 9 | Shared wire-contract module | Both | Planned |
@@ -43,6 +43,7 @@ guards for handlers, and a root type-check that covers every workspace.
 |-----------|---------|
 | 4 — client request adapter | Every request now uses one adapter. The client has **one** raw `fetch` left — inside that adapter. Four error classes collapsed to one. Net **−310 lines**, plus 9 tests for the adapter. |
 | 5 — cache tree + invalidation | ~50 scattered invalidation calls replaced by one module. Two reactive cache-subscription hooks removed. Three latent bugs fixed, including a key mismatch that left a settings banner stale. 12 tests, including seeded randomized scenarios. |
+| 6 — journey page fracture | A 3,257-line page split into a layout module, five stage modules, and shared UI. The route and behaviour are unchanged. Three near-identical job-status loops became one `runJob(spec)`. 6 fake-timer tests for the loop. |
 
 Each candidate kept or increased the test count and passed the server and client
 type checks before its commit.

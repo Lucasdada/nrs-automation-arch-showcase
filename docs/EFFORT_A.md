@@ -95,7 +95,7 @@ cache-subscription hooks were removed. 12 tests, including 1000 seeded
 randomized runs that check every refresh matches a real query, that one
 project's refresh cannot reach another project, and that a slug is preserved.
 
-## In progress
+## Done
 
 ### 6 — Fracture the journey page (client)
 
@@ -105,10 +105,27 @@ Readiness), and about 18 sub-components — more than 3,200 lines. The store als
 holds three near-identical job-status loops (requirement extraction, the
 Walkthrough, and Generated test creation).
 
-**Plan.** Split the file into one module per stage plus a layout module. Give
-each stage one hook — its data, its load state, its error, and its actions. Write
-one status loop that each job describes. Keep the route and the user-visible
-behaviour the same. Add tests for the new status loop.
+**Change.** Split the one file into a `journey/` folder:
+
+- `JourneyLayout.tsx` — the layout and the five tab bodies.
+- `DocumentsStage`, `RequirementsStage`, `TestsStage`, `PlanStage`,
+  `ReadinessStage` — one module per stage.
+- `ui.tsx` — the two shared parts (`NextStep`, `EmptyTab`).
+- `confidence.ts` — the confidence thresholds and banding, shared by
+  Requirements and Tests.
+
+`JourneyDetail.tsx` is now an 8-line re-export; the route and the
+user-visible behaviour are unchanged.
+
+The store's three job-status loops became one `runJob(spec)`. A job supplies a
+small descriptor (name, progress request, success text, refresh); the loop owns
+the cadence, the "was I replaced?" guard, and the running / done / failed /
+error outcomes. The public `start…` and `resume…` functions are unchanged.
+
+**Result.** Six store tests with fake timers cover the running, done, failed,
+thrown-status, replaced-job, and duplicate-start cases. The per-stage handle
+hooks (one read/poll/mutate hook per stage) remain as a follow-up, held back
+until there are component tests to protect them.
 
 ## Planned
 
