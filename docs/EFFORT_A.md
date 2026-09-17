@@ -186,6 +186,14 @@ a production build, and a lint rule for complexity.
 The client's `types/index.ts` is manually mirrored by comments in server files.
 One shared contract module replaces the copy.
 
+**First slice done.** The status words now have one source in
+`shared/contracts`: Run status, Test status, Review state, Document status,
+Requirement review state, Test plan status, Requirement priority, Requirement
+type, Requirement result, and Provider. The UI, the server, and the MCP bridge
+read them from there. It fixed real drift — the UI's Review state did not know
+`rejected`, which the server can send. The remaining response and request shapes
+move in the same way next.
+
 ## Bench — smaller clean-ups
 
 - A shared helper for the two Playwright configs.
