@@ -9,7 +9,9 @@ environment stage), **Requirement** (one testable statement), **Generated test**
 (machine-written test code), **Spec** (the `.spec.ts` file), **Materialize**
 (turn generated code into a spec plus a database row), **Feature** (a test's
 group), **Review state** (draft → active), **Confidence** (a separate quality
-axis), **Event** (`tests_updated`).
+axis), **Event** (`tests_updated`), **Run** (one execution of a Project's tests
+against one Journey's environment), **Run event** (one line in a Run's event
+JSONL, distinct from an Event).
 
 ## Done
 
@@ -127,6 +129,29 @@ thrown-status, replaced-job, and duplicate-start cases. The per-stage handle
 hooks (one read/poll/mutate hook per stage) remain as a follow-up, held back
 until there are component tests to protect them.
 
+### 7 — Repository read models and one run-events module (server)
+
+**Problem.** The runs repository returned raw rows and the routes re-mapped them,
+so the client shapes lived in the route. The runs list asked for each run's
+failed test titles one run at a time (1 + N queries). The Projects repository
+asked for each Project's last run one row at a time and read `project.json`
+inside the repository, mixing persistence with disk. Two modules parsed the
+Run-event JSONL with two different event types.
+
+**Change.** `runs/run-events.ts` owns the Run-event contract: a tolerant line
+parser, live totals, and step grouping. `runs/run-read-model.ts` composes the
+rows and the live events into the client shapes; one batch query gets every
+run's failed test titles. `projects/project-read-model.ts` composes the cached
+row with `project.json`; one windowed query gets every Project's last run.
+`runs-repository.ts` and `projects-repository.ts` are now persistence adapters
+only, and neither does file I/O.
+
+**Result.** Wire shapes unchanged. The runs list is 2 queries instead of 1 + N;
+the Projects list is 2 queries instead of 1 + N. The event contract now has one
+owner, so the orchestrator and the read model cannot drift apart. 14 new tests
+(server 36): the parser, live totals, step grouping, the batched read model, and
+the live overlay.
+
 ## Cross-cutting — complexity and comments
 
 After candidate 6, every function in the codebase was brought to a cyclomatic
@@ -151,17 +176,10 @@ booleans and ternaries into helpers or lookup tables, and replace long
 code, document output, or user-visible text changed. Comments were trimmed to
 short, necessary notes.
 
-Every step was verified with type checks, the test suites (client 27, server 22),
+Every step was verified with type checks, the test suites (client 27, server 36),
 a production build, and a lint rule for complexity.
 
 ## Planned
-
-### 7 — Repository read models and one run-events module (server)
-
-The runs repository returns raw rows and the routes re-map them; a summary
-re-reads failed test titles once per row; the projects repository re-reads
-`project.json` per row; and JSONL is parsed in two places. One read-model layer
-and one run-events module.
 
 ### 9 — One shared wire-contract module (both)
 
