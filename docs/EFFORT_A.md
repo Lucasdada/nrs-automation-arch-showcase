@@ -200,8 +200,12 @@ nothing new runs; the UI and server check against the same file. The server's
 copies collapsed too — its start-run body and orchestrator input were
 field-for-field, and its `TestResultView` is now just `TestResult`.
 
-The remaining shapes (Project, Journey, Requirement, Generated test, documents,
-agent, and the run event) move in the same way next.
+The Project and Journey shapes moved next — Project, Feature, pack, Journey, run
+defaults, confidence thresholds, the git config and status, and the journey
+readiness / traceability / verdict set, plus the overview rollup.
+
+The remaining shapes (Requirement, Generated test, documents, test plans,
+agent and settings, and the run event) move in the same way next.
 
 ## Bench — smaller clean-ups
 
