@@ -29,13 +29,17 @@ See [`docs/METHOD.md`](docs/METHOD.md) for that loop and
 | 4 | One client request adapter | Client | Done |
 | 5 | Typed cache tree + operation-owned invalidation | Client | Done |
 | 6 | Fracture the journey page into stage modules; collapse the poll loops | Client | Done |
-| 7 | Repository read models + one run-events module | Server | Planned |
+| 7 | Repository read models + one run-events module | Server | Done |
 | 8 | Stop `project.json` write-backs erasing runtime fields | Server | Done |
-| 9 | Shared wire-contract module | Both | Planned |
+| 9 | Shared wire-contract module | Both | In progress — every shape except the agent and settings ones |
 
 A set of smaller clean-ups sits behind these: shared Playwright-config helper,
 a DSL reference module, unified job trackers, a path-resolution split, request
 guards for handlers, and a root type-check that covers every workspace.
+
+Alongside the refactor, the platform was driven on purpose with bad input to see
+how it held up. Five issues it found are fixed; they are written up in
+[`docs/RUN_SAFETY.md`](docs/RUN_SAFETY.md).
 
 ## Results so far
 

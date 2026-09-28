@@ -179,33 +179,36 @@ short, necessary notes.
 Every step was verified with type checks, the test suites (client 27, server 36),
 a production build, and a lint rule for complexity.
 
-## Planned
+## In progress
 
 ### 9 — One shared wire-contract module (both)
 
-The client's `types/index.ts` is manually mirrored by comments in server files.
+The client's `types/index.ts` was manually mirrored by comments in server files.
 One shared contract module replaces the copy.
 
-**First two slices done.** The status words now have one source in
-`shared/contracts`: Run status, Test status, Review state, Document status,
-Requirement review state, Test plan status, Requirement priority, Requirement
-type, Requirement result, and Provider. The UI, the server, and the MCP bridge
-read them from there. It fixed real drift — the UI's Review state did not know
-`rejected`, which the server can send.
+**Almost done.** One file, `shared/contracts`, now describes the shapes the UI,
+the server, and the MCP bridge pass to each other: the status words, the Run /
+result / Insights set, the Project and Journey set, the source-document /
+requirement / test-plan / Generated-test set, the journey and project request
+bodies, the live event types, and the test definition. Only the agent and
+settings shapes remain, held back because hosting will reshape them.
 
-The Run, result, and Insights shapes moved next, along with the start-run
-request body: run summary and detail, test result, step, attachment, test
-history, and the Insights set. The six status words are shared types only, so
-nothing new runs; the UI and server check against the same file. The server's
-copies collapsed too — its start-run body and orchestrator input were
-field-for-field, and its `TestResultView` is now just `TestResult`.
+The move fixed real drift as it went:
 
-The Project and Journey shapes moved next — Project, Feature, pack, Journey, run
-defaults, confidence thresholds, the git config and status, and the journey
-readiness / traceability / verdict set, plus the overview rollup.
+- The UI's Review state did not know `rejected`, which the server can send.
+- A Generated test's source document and reference code were typed as always
+  present, but the server sends empty.
+- The run event was written three different ways; `timestamp` is now optional
+  (the synthetic `connected` and `run_complete` frames do not carry it) and
+  `run_complete` is part of the union.
+- The MCP bridge's test list used `filePath` where the server sends `file`, so
+  it printed the wrong field.
+- The server's start-run body and orchestrator input were field-for-field
+  copies; the input now extends the shared body.
 
-The remaining shapes (Requirement, Generated test, documents, test plans,
-agent and settings, and the run event) move in the same way next.
+The module is a declaration file that holds no running code, so it adds no
+runtime, no build step, and no dependency; each package points at it with one
+short name.
 
 ## Bench — smaller clean-ups
 
